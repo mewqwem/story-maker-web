@@ -39,6 +39,8 @@ interface ILibraryItem {
   service?: "11labs" | "genai";
   language?: string;
 }
+const BASE_URL =
+  "https://story-maker-web-932514732600.europe-west1.run.app/library";
 
 const PromptManager = ({ type }: { type: ILibraryItem["type"] }) => {
   const { message } = App.useApp();
@@ -54,9 +56,7 @@ const PromptManager = ({ type }: { type: ILibraryItem["type"] }) => {
   } = useQuery<ILibraryItem[]>({
     queryKey: ["library", type],
     queryFn: async () => {
-      const res = await axios.get(
-        `https://story-maker-web-932514732600.europe-west1.run.app/library?type=${type}`,
-      );
+      const res = await axios.get(`${BASE_URL}?type=${type}`);
       return res.data;
     },
     staleTime: 1000 * 60 * 5,
@@ -69,9 +69,8 @@ const PromptManager = ({ type }: { type: ILibraryItem["type"] }) => {
   const saveMutation = useMutation({
     mutationFn: async (values: ILibraryItem) => {
       const isEdit = !!editingItem?._id;
-      const url = isEdit
-        ? `https://story-maker-web-932514732600.europe-west1.run.app/${editingItem?._id}`
-        : `https://story-maker-web-932514732600.europe-west1.run.app`;
+      const url = isEdit ? `${BASE_URL}/${editingItem?._id}` : BASE_URL;
+
       return axios({
         method: isEdit ? "PATCH" : "POST",
         url,
@@ -87,10 +86,7 @@ const PromptManager = ({ type }: { type: ILibraryItem["type"] }) => {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: async (id: string) =>
-      axios.delete(
-        `https://story-maker-web-932514732600.europe-west1.run.app/${id}`,
-      ),
+    mutationFn: async (id: string) => axios.delete(`${BASE_URL}/${id}`),
     onSuccess: () => {
       message.success("Deleted successfully");
       queryClient.invalidateQueries({ queryKey: ["library", type] });

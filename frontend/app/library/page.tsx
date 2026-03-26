@@ -54,7 +54,9 @@ const PromptManager = ({ type }: { type: ILibraryItem["type"] }) => {
   } = useQuery<ILibraryItem[]>({
     queryKey: ["library", type],
     queryFn: async () => {
-      const res = await axios.get(`http://localhost:4000/library?type=${type}`);
+      const res = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}?type=${type}`,
+      );
       return res.data;
     },
     staleTime: 1000 * 60 * 5,
@@ -68,8 +70,8 @@ const PromptManager = ({ type }: { type: ILibraryItem["type"] }) => {
     mutationFn: async (values: ILibraryItem) => {
       const isEdit = !!editingItem?._id;
       const url = isEdit
-        ? `http://localhost:4000/library/${editingItem?._id}`
-        : "http://localhost:4000/library";
+        ? `${process.env.NEXT_PUBLIC_API_URL}/${editingItem?._id}`
+        : "${process.env.NEXT_PUBLIC_API_URL}";
       return axios({
         method: isEdit ? "PATCH" : "POST",
         url,
@@ -86,7 +88,7 @@ const PromptManager = ({ type }: { type: ILibraryItem["type"] }) => {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) =>
-      axios.delete(`http://localhost:4000/library/${id}`),
+      axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/${id}`),
     onSuccess: () => {
       message.success("Deleted successfully");
       queryClient.invalidateQueries({ queryKey: ["library", type] });

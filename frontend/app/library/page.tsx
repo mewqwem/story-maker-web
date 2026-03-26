@@ -71,7 +71,7 @@ const PromptManager = ({ type }: { type: ILibraryItem["type"] }) => {
       const isEdit = !!editingItem?._id;
       const url = isEdit
         ? `${process.env.NEXT_PUBLIC_API_URL}/${editingItem?._id}`
-        : "${process.env.NEXT_PUBLIC_API_URL}";
+        : `${process.env.NEXT_PUBLIC_API_URL}`;
       return axios({
         method: isEdit ? "PATCH" : "POST",
         url,

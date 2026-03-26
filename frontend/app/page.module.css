@@ -1,0 +1,73 @@
+/* page.module.css [cite: 2026-03-26] */
+
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.pageHeader {
+  margin-bottom: 48px;
+}
+
+.title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  color: #666;
+  font-size: 16px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+.card {
+  background: #0a0a0a;
+  border: 1px solid #1a1a1a;
+  padding: 32px;
+  border-radius: 12px;
+  transition: border-color 0.3s ease;
+}
+
+.card:hover {
+  border-color: #333;
+}
+
+.card h3 {
+  font-size: 18px;
+  margin: 16px 0 8px;
+  color: #fff;
+}
+
+.card p {
+  font-size: 14px;
+  color: #555;
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+
+.primaryBtn {
+  background: #fff;
+  color: #000;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.primaryBtn:hover {
+  background: #ccc;
+}
+
+.outlineCard {
+  background: transparent;
+  border-style: dashed;
+}

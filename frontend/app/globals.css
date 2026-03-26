@@ -1,0 +1,29 @@
+:root {
+  --background: #000000;
+  --foreground: #ffffff;
+}
+html {
+  background: var(--background);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  margin: 0;
+  padding: 0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+@media (min-width: 992px) {
+  .mobile-burger {
+    display: none !important;
+  }
+}
+
+.ant-layout-content {
+  display: flex;
+  flex-direction: column;
+}

@@ -51,31 +51,32 @@ export default function CreateStoryPage() {
 
   const [selectedVoiceId, setSelectedVoiceId] = useState<string>("");
 
-  // 1. Завантаження шаблонів історій
   const { data: templates, isLoading: loadingTemplates } = useQuery<
     ILibraryItem[]
   >({
     queryKey: ["templates", "story"],
     queryFn: async () => {
-      const res = await axios.get("http://localhost:4000/library?type=story");
+      const res = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/library?type=story`,
+      );
       return res.data;
     },
   });
 
-  // 2. Завантаження доступних голосів
   const { data: voices } = useQuery<ILibraryItem[]>({
     queryKey: ["templates", "voice"],
     queryFn: async () => {
-      const res = await axios.get("http://localhost:4000/library?type=voice");
+      const res = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/library?type=voice`,
+      );
       return res.data;
     },
   });
 
-  // 3. Мутація для генерації тексту
   const storyMutation = useMutation({
     mutationFn: async (payload: IGeneratePayload) => {
       const res = await axios.post<IGenerateResponse>(
-        "http://localhost:4000/ai/generate-story",
+        `${process.env.NEXT_PUBLIC_API_URL}/ai/generate-story`,
         payload,
       );
       return res.data;
@@ -96,7 +97,7 @@ export default function CreateStoryPage() {
       projectName: string;
     }) => {
       const res = await axios.post(
-        "http://localhost:4000/ai/generate-audio-archive",
+        `${process.env.NEXT_PUBLIC_API_URL}/ai/generate-audio-archive`,
         payload,
         { responseType: "blob" }, // КРИТИЧНО ВАЖЛИВО ДЛЯ ФАЙЛІВ
       );

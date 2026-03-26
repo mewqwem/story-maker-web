@@ -17,7 +17,6 @@ import "./globals.css";
 
 const { Header, Content, Footer, Sider } = Layout;
 
-// Strict typing for menu items without 'any' [cite: 2026-01-12]
 type MenuItem = Required<MenuProps>["items"][number];
 
 export default function RootLayout({ children }: { children: ReactNode }) {

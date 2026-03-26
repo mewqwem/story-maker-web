@@ -57,7 +57,7 @@ export default function CreateStoryPage() {
     queryKey: ["templates", "story"],
     queryFn: async () => {
       const res = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/library?type=story`,
+        `https://story-maker-web-932514732600.europe-west1.run.app/library?type=story`,
       );
       return res.data;
     },
@@ -67,7 +67,7 @@ export default function CreateStoryPage() {
     queryKey: ["templates", "voice"],
     queryFn: async () => {
       const res = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/library?type=voice`,
+        `https://story-maker-web-932514732600.europe-west1.run.app/library?type=voice`,
       );
       return res.data;
     },
@@ -76,7 +76,7 @@ export default function CreateStoryPage() {
   const storyMutation = useMutation({
     mutationFn: async (payload: IGeneratePayload) => {
       const res = await axios.post<IGenerateResponse>(
-        `${process.env.NEXT_PUBLIC_API_URL}/ai/generate-story`,
+        `https://story-maker-web-932514732600.europe-west1.run.app/ai/generate-story`,
         payload,
       );
       return res.data;
@@ -97,7 +97,7 @@ export default function CreateStoryPage() {
       projectName: string;
     }) => {
       const res = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/ai/generate-audio-archive`,
+        `https://story-maker-web-932514732600.europe-west1.run.app/ai/generate-audio-archive`,
         payload,
         { responseType: "blob" }, // КРИТИЧНО ВАЖЛИВО ДЛЯ ФАЙЛІВ
       );

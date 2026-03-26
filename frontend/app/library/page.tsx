@@ -55,7 +55,7 @@ const PromptManager = ({ type }: { type: ILibraryItem["type"] }) => {
     queryKey: ["library", type],
     queryFn: async () => {
       const res = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}?type=${type}`,
+        `https://story-maker-web-932514732600.europe-west1.run.app?type=${type}`,
       );
       return res.data;
     },
@@ -70,8 +70,8 @@ const PromptManager = ({ type }: { type: ILibraryItem["type"] }) => {
     mutationFn: async (values: ILibraryItem) => {
       const isEdit = !!editingItem?._id;
       const url = isEdit
-        ? `${process.env.NEXT_PUBLIC_API_URL}/${editingItem?._id}`
-        : `${process.env.NEXT_PUBLIC_API_URL}`;
+        ? `https://story-maker-web-932514732600.europe-west1.run.app/${editingItem?._id}`
+        : `https://story-maker-web-932514732600.europe-west1.run.app`;
       return axios({
         method: isEdit ? "PATCH" : "POST",
         url,
@@ -88,7 +88,9 @@ const PromptManager = ({ type }: { type: ILibraryItem["type"] }) => {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) =>
-      axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/${id}`),
+      axios.delete(
+        `https://story-maker-web-932514732600.europe-west1.run.app/${id}`,
+      ),
     onSuccess: () => {
       message.success("Deleted successfully");
       queryClient.invalidateQueries({ queryKey: ["library", type] });

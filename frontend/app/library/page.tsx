@@ -55,7 +55,7 @@ const PromptManager = ({ type }: { type: ILibraryItem["type"] }) => {
     queryKey: ["library", type],
     queryFn: async () => {
       const res = await axios.get(
-        `https://story-maker-web-932514732600.europe-west1.run.app?type=${type}`,
+        `https://story-maker-web-932514732600.europe-west1.run.app/library?type=${type}`,
       );
       return res.data;
     },

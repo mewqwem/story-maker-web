@@ -1,0 +1,57 @@
+.logo {
+  padding-top: 20px;
+  padding: 15px;
+}
+.innerLayout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.logoPlaceholder {
+  height: 32px;
+  margin: 16px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+}
+
+.header {
+  padding: 0 16px !important;
+  background: #001529;
+  display: flex;
+  align-items: center;
+  height: 64px;
+}
+
+.mobileBurger {
+  color: white !important;
+  font-size: 18px !important;
+  margin-right: 16px !important;
+}
+
+.headerTitle {
+  color: white;
+  font-weight: bold;
+}
+
+.content {
+  margin: 24px 16px 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.innerContent {
+  padding: 24px;
+  min-height: 360px;
+  background: #141414;
+  border-radius: 8px;
+  flex: 1;
+}
+
+.footer {
+  text-align: center;
+  color: #444;
+  padding: 16px 0;
+}

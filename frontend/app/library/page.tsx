@@ -30,11 +30,10 @@ import {
 const { TextArea } = Input;
 const { Title, Text } = Typography;
 
-// Чіткий інтерфейс, що включає поля для голосу
 interface ILibraryItem {
   _id?: string;
   name: string;
-  content: string; // Тут лежить текст промпту АБО Voice ID
+  content: string;
   type: "story" | "seo" | "image" | "voice";
   service?: "11labs" | "genai";
   language?: string;
@@ -142,7 +141,6 @@ const PromptManager = ({ type }: { type: ILibraryItem["type"] }) => {
                 </Space>
               }
             >
-              {/* Якщо це голос - показуємо ID та теги, інакше просто текст */}
               {type === "voice" ? (
                 <Flex vertical gap="small">
                   <Text type="secondary" copyable>

@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import axios from "axios";
 import {
   Typography,
   Select,
@@ -15,27 +14,9 @@ import {
   App,
 } from "antd";
 import { RocketOutlined, EditOutlined, AudioOutlined } from "@ant-design/icons";
-
-interface ILibraryItem {
-  _id: string;
-  name: string;
-  content: string;
-  type: string;
-  language?: string;
-}
-
-interface IGeneratePayload {
-  projectName: string;
-  title: string;
-  templateId: string;
-  language: string;
-}
-
-interface IGenerateResponse {
-  script: string;
-  projectName: string;
-  success: boolean;
-}
+import { IGeneratePayload } from "@/type/generate";
+import { ILibraryItem } from "@/type/library";
+import { generateAudioArchive, generateStory, getLibrary } from "./lib/api";
 
 const { Title, Text } = Typography;
 
@@ -46,7 +27,7 @@ export default function CreateStoryPage() {
     projectName: "",
     title: "",
     templateId: "",
-    language: "Ukrainian",
+    language: "",
   });
 
   const [selectedVoiceId, setSelectedVoiceId] = useState<string>("");
@@ -55,74 +36,39 @@ export default function CreateStoryPage() {
     ILibraryItem[]
   >({
     queryKey: ["templates", "story"],
-    queryFn: async () => {
-      const res = await axios.get(
-        `https://story-maker-web-932514732600.europe-west1.run.app/library?type=story`,
-      );
-      return res.data;
-    },
+    queryFn: () => getLibrary("story"),
   });
 
   const { data: voices } = useQuery<ILibraryItem[]>({
     queryKey: ["templates", "voice"],
-    queryFn: async () => {
-      const res = await axios.get(
-        `https://story-maker-web-932514732600.europe-west1.run.app/library?type=voice`,
-      );
-      return res.data;
-    },
+    queryFn: () => getLibrary("voice"),
   });
 
   const storyMutation = useMutation({
-    mutationFn: async (payload: IGeneratePayload) => {
-      const res = await axios.post<IGenerateResponse>(
-        `https://story-maker-web-932514732600.europe-west1.run.app/ai/generate-story`,
-        payload,
-      );
-      return res.data;
-    },
+    mutationFn: generateStory,
     onSuccess: (data) => {
       message.success(`Project "${data.projectName}" text generated!`);
     },
-    onError: () => {
-      message.error("Text generation failed. Check server logs.");
-    },
+    onError: () => message.error("Text generation failed."),
   });
 
-  // 4. Мутація для створення та скачування аудіо (ZIP архів)
   const audioMutation = useMutation({
-    mutationFn: async (payload: {
-      text: string;
-      voiceId: string;
-      projectName: string;
-    }) => {
-      const res = await axios.post(
-        `https://story-maker-web-932514732600.europe-west1.run.app/ai/generate-audio-archive`,
-        payload,
-        { responseType: "blob" }, // КРИТИЧНО ВАЖЛИВО ДЛЯ ФАЙЛІВ
-      );
-      return res.data as Blob;
-    },
+    mutationFn: generateAudioArchive,
     onSuccess: (blob: Blob) => {
-      // Створюємо тимчасове посилання і програмно натискаємо на нього для скачування
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
       link.download = `${formData.projectName}.zip`;
-      document.body.appendChild(link);
       link.click();
-      document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
-
       message.success("Archive downloaded successfully!");
     },
-    onError: () => {
-      message.error("Audio generation failed. Check server logs.");
-    },
+    onError: () => message.error("Audio generation failed."),
   });
 
   const handleGenerateText = () => {
-    if (!formData.projectName || !formData.title || !formData.templateId) {
+    const { projectName, title, templateId } = formData;
+    if (!projectName || !title || !templateId) {
       return message.warning("Please fill all fields for the story");
     }
     storyMutation.mutate(formData);

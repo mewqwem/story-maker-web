@@ -1,26 +1,24 @@
 "use client";
 
-import React, { useState, ReactNode } from "react";
+import { useState, ReactNode } from "react";
 import Link from "next/link";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
 import { Layout, Menu, Button, Drawer, ConfigProvider, theme, App } from "antd";
-import {
-  MenuOutlined,
-  RocketOutlined,
-  BookOutlined,
-  HistoryOutlined,
-  SettingOutlined,
-} from "@ant-design/icons";
+import { MenuOutlined, RocketOutlined, BookOutlined } from "@ant-design/icons";
 import type { MenuProps } from "antd";
 import Providers from "./providers";
 import "./globals.css";
+import css from "./layout.module.css";
+import { usePathname } from "next/dist/client/components/navigation";
 
 const { Header, Content, Footer, Sider } = Layout;
 
 type MenuItem = Required<MenuProps>["items"][number];
 
 export default function RootLayout({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
   const [mobileVisible, setMobileVisible] = useState<boolean>(false);
+  const selectedKey = pathname === "/library" ? "library" : "create";
 
   const menuItems: MenuItem[] = [
     {
@@ -43,64 +41,36 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             <Providers>
               <App>
                 <Layout style={{ minHeight: "100vh" }}>
-                  <Sider breakpoint="lg" collapsedWidth="0" theme="dark">
-                    <div
-                      style={{
-                        height: 32,
-                        margin: 16,
-                        background: "rgba(255, 255, 255, 0.2)",
-                        borderRadius: 6,
-                      }}
-                    />
+                  <Sider
+                    trigger={null}
+                    breakpoint="lg"
+                    collapsedWidth="0"
+                    theme="dark"
+                  >
+                    <h1 className={css.logo}>StoryMaker</h1>
                     <Menu
                       theme="dark"
                       mode="inline"
-                      defaultSelectedKeys={["create"]}
+                      defaultSelectedKeys={[selectedKey]}
                       items={menuItems}
                     />
                   </Sider>
 
                   <Layout>
-                    <Header
-                      style={{
-                        padding: "0 16px",
-                        background: "#001529",
-                        display: "flex",
-                        alignItems: "center",
-                      }}
-                    >
+                    <Header className={css.header}>
                       <Button
                         type="text"
                         icon={<MenuOutlined />}
                         onClick={() => setMobileVisible(true)}
-                        style={{
-                          color: "white",
-                          fontSize: "18px",
-                          marginRight: "16px",
-                        }}
-                        className="mobile-burger"
+                        className={`${css.mobileBurger} mobile-burger`}
                       />
-                      <span style={{ color: "white", fontWeight: "bold" }}>
-                        STORYMAKER WEB
-                      </span>
                     </Header>
 
-                    <Content style={{ margin: "24px 16px 0" }}>
-                      <div
-                        style={{
-                          padding: 24,
-                          minHeight: 360,
-                          background: "#141414",
-                          borderRadius: 8,
-                        }}
-                      >
-                        {children}
-                      </div>
+                    <Content className={css.content}>
+                      <div className={css.innerContent}>{children}</div>
                     </Content>
 
-                    <Footer style={{ textAlign: "center", color: "#444" }}>
-                      StoryMaker Web ©2026
-                    </Footer>
+                    <Footer className={css.footer}>StoryMaker Web ©2026</Footer>
                   </Layout>
 
                   <Drawer
@@ -112,7 +82,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                   >
                     <Menu
                       mode="inline"
-                      defaultSelectedKeys={["create"]}
+                      defaultSelectedKeys={[selectedKey]}
                       items={menuItems}
                       onClick={() => setMobileVisible(false)}
                     />

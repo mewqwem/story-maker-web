@@ -4,6 +4,7 @@
 }
 html {
   background: var(--background);
+  height: 100%;
 }
 
 body {
@@ -11,6 +12,7 @@ body {
   color: var(--foreground);
   margin: 0;
   padding: 0;
+  height: 100%;
 }
 
 * {
@@ -26,4 +28,7 @@ body {
 .ant-layout-content {
   display: flex;
   flex-direction: column;
+}
+#__next {
+  height: 100%;
 }

@@ -2,7 +2,7 @@ import { IGeneratePayload, IGenerateResponse } from "@/type/generate";
 import { ILibraryItem } from "@/type/library";
 import axios from "axios";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+const API_URL = "https://story-maker-web-932514732600.europe-west1.run.app";
 
 const api = axios.create({
   baseURL: API_URL,

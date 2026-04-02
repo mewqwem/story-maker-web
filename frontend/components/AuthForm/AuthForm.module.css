@@ -1,0 +1,29 @@
+.authWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100vh;
+  background-color: #141414;
+  color: #ffffff;
+}
+
+.authWrapper h1 {
+  margin-bottom: 24px;
+  font-size: 24px;
+}
+
+.authButton {
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 500;
+  color: #ffffff;
+  background-color: #1677ff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.authButton:hover {
+  background-color: #4096ff;
+}

@@ -35,6 +35,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
 
   const { data: session, status } = useSession();
 
+  // const userId = (session?.user as { id: string })?.id;
   const isLoading = status === "loading";
   const isAuth = status === "authenticated";
   const selectedKey = pathname.startsWith("/library") ? "library" : "create";

@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
+import { useSession } from "next-auth/react";
 import {
   Tabs,
   Button,
@@ -44,6 +45,7 @@ const BASE_URL =
 
 const PromptManager = ({ type }: { type: ILibraryItem["type"] }) => {
   const { message } = App.useApp();
+  const { data: session } = useSession();
   const queryClient = useQueryClient();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [editingItem, setEditingItem] = useState<ILibraryItem | null>(null);
@@ -54,11 +56,17 @@ const PromptManager = ({ type }: { type: ILibraryItem["type"] }) => {
     isLoading,
     isError,
   } = useQuery<ILibraryItem[]>({
-    queryKey: ["library", type],
+    queryKey: ["library", type, (session?.user as { id?: string })?.id],
     queryFn: async () => {
-      const res = await axios.get(`${BASE_URL}?type=${type}`);
+      const userId = (session?.user as { id?: string })?.id;
+      const res = await axios.get(`${BASE_URL}?type=${type}`, {
+        headers: {
+          "x-user-id": userId,
+        },
+      });
       return res.data;
     },
+    enabled: !!(session?.user as { id?: string })?.id,
     staleTime: 1000 * 60 * 5,
   });
 
@@ -75,21 +83,33 @@ const PromptManager = ({ type }: { type: ILibraryItem["type"] }) => {
         method: isEdit ? "PATCH" : "POST",
         url,
         data: { ...values, type },
+        headers: {
+          "x-user-id": (session?.user as { id?: string })?.id,
+        },
       });
     },
     onSuccess: () => {
       message.success("Saved successfully!");
-      queryClient.invalidateQueries({ queryKey: ["library", type] });
+      queryClient.invalidateQueries({
+        queryKey: ["library", type, (session?.user as { id?: string })?.id],
+      });
       setIsModalOpen(false);
       form.resetFields();
     },
   });
 
   const deleteMutation = useMutation({
-    mutationFn: async (id: string) => axios.delete(`${BASE_URL}/${id}`),
+    mutationFn: async (id: string) =>
+      axios.delete(`${BASE_URL}/${id}`, {
+        headers: {
+          "x-user-id": (session?.user as { id?: string })?.id,
+        },
+      }),
     onSuccess: () => {
       message.success("Deleted successfully");
-      queryClient.invalidateQueries({ queryKey: ["library", type] });
+      queryClient.invalidateQueries({
+        queryKey: ["library", type, (session?.user as { id?: string })?.id],
+      });
     },
   });
 

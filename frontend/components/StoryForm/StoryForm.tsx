@@ -71,9 +71,9 @@ export const StoryForm: React.FC<StoryFormProps> = ({
             style={{ width: "100%", marginTop: 8 }}
             onChange={(val) => setFormData({ ...formData, language: val })}
             options={[
-              { value: "Ukrainian", label: "Ukrainian" },
               { value: "English", label: "English" },
               { value: "German", label: "German" },
+              { value: "France", label: "France" },
             ]}
           />
         </div>

@@ -20,6 +20,9 @@ export class LibraryItem extends Document {
 
   @Prop({ required: false })
   language?: string; // Наприклад: "uk", "en"
+
+  @Prop({ required: true, index: true })
+  userId: string;
 }
 
 export const LibrarySchema = SchemaFactory.createForClass(LibraryItem);

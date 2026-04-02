@@ -11,23 +11,35 @@ export class LibraryService {
     private readonly libraryModel: Model<LibraryItem>,
   ) {}
 
-  async findAll(type: string): Promise<LibraryItem[]> {
-    return this.libraryModel.find({ type }).sort({ createdAt: -1 }).exec();
+  async findAll(type: string, userId: string): Promise<LibraryItem[]> {
+    return this.libraryModel
+      .find({ type, userId })
+      .sort({ createdAt: -1 })
+      .exec();
   }
 
-  async create(dto: CreateLibraryItemDto): Promise<LibraryItem> {
-    const newItem = new this.libraryModel(dto);
+  async create(
+    dto: CreateLibraryItemDto,
+    userId: string,
+  ): Promise<LibraryItem> {
+    const newItem = new this.libraryModel({
+      ...dto,
+      userId,
+    });
     return newItem.save();
   }
 
   async update(
     id: string,
     dto: UpdateLibraryItemDto,
+    userId: string,
   ): Promise<LibraryItem | null> {
-    return this.libraryModel.findByIdAndUpdate(id, dto, { new: true }).exec();
+    return this.libraryModel
+      .findOneAndUpdate({ _id: id, userId }, dto, { new: true })
+      .exec();
   }
 
-  async delete(id: string): Promise<LibraryItem | null> {
-    return this.libraryModel.findByIdAndDelete(id).exec();
+  async delete(id: string, userId: string): Promise<LibraryItem | null> {
+    return this.libraryModel.findOneAndDelete({ _id: id, userId }).exec();
   }
 }

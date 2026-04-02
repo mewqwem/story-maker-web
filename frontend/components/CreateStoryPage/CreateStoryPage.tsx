@@ -1,4 +1,3 @@
-// page.tsx (Main Logic)
 "use client";
 
 import React, { useState } from "react";
@@ -7,17 +6,13 @@ import { RocketOutlined } from "@ant-design/icons";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { getLibrary, generateStory, generateAudioArchive } from "@/lib/api";
 import { IGeneratePayload } from "@/type/generate";
-import { StoryForm } from "@/components/StoryForm/StoryForm";
-import { StoryResult } from "@/components/StoryResult/StoryResult";
-
-// Import sub-components
+import { StoryForm } from "../StoryForm/StoryForm";
+import { StoryResult } from "../StoryResult/StoryResult";
 
 const { Title } = Typography;
 
 export default function CreateStoryPage() {
   const { message } = App.useApp();
-
-  // States
   const [formData, setFormData] = useState<IGeneratePayload>({
     projectName: "",
     title: "",
@@ -26,21 +21,21 @@ export default function CreateStoryPage() {
   });
   const [selectedVoiceId, setSelectedVoiceId] = useState<string>("");
 
-  // Data fetching
   const { data: templates, isLoading: loadingTemplates } = useQuery({
     queryKey: ["templates", "story"],
     queryFn: () => getLibrary("story"),
   });
+
   const { data: voices } = useQuery({
     queryKey: ["templates", "voice"],
     queryFn: () => getLibrary("voice"),
   });
 
-  // Mutations
   const storyMutation = useMutation({
     mutationFn: generateStory,
     onSuccess: (data) =>
-      message.success(`Project "${data.projectName}" generated!`),
+      message.success(`Project "${data.projectName}" text generated!`),
+    onError: () => message.error("Text generation failed."),
   });
 
   const audioMutation = useMutation({
@@ -51,9 +46,16 @@ export default function CreateStoryPage() {
       link.href = url;
       link.download = `${formData.projectName}.zip`;
       link.click();
-      window.URL.revokeObjectURL(url);
+      message.success("Archive downloaded!");
     },
   });
+
+  const handleGenerateText = () => {
+    if (!formData.projectName || !formData.title || !formData.templateId) {
+      return message.warning("Please fill all fields");
+    }
+    storyMutation.mutate(formData);
+  };
 
   return (
     <div style={{ maxWidth: 800, margin: "0 auto" }}>
@@ -67,7 +69,7 @@ export default function CreateStoryPage() {
           setFormData={setFormData}
           templates={templates}
           loadingTemplates={loadingTemplates}
-          onSubmit={() => storyMutation.mutate(formData)}
+          onSubmit={handleGenerateText}
           isPending={storyMutation.isPending}
         />
       </Card>
@@ -78,7 +80,6 @@ export default function CreateStoryPage() {
           voices={voices}
           selectedVoiceId={selectedVoiceId}
           setSelectedVoiceId={setSelectedVoiceId}
-          isAudioPending={audioMutation.isPending}
           onMakeVoice={() =>
             audioMutation.mutate({
               text: storyMutation.data!.script,
@@ -86,6 +87,7 @@ export default function CreateStoryPage() {
               projectName: formData.projectName,
             })
           }
+          isAudioPending={audioMutation.isPending}
         />
       )}
     </div>

@@ -17,7 +17,6 @@ import {
   DownloadOutlined,
   DeleteOutlined,
   SyncOutlined,
-  PictureOutlined,
 } from "@ant-design/icons";
 import { useImageGenerator } from "../../hooks/useImageGenerator";
 import { ImageCard } from "./ImageCard";
@@ -41,11 +40,20 @@ export const ImageGenerator: React.FC = () => {
   const [idea, setIdea] = useState("");
   const [promptsCount, setPromptsCount] = useState(2);
   const [photosPerPrompt, setPhotosPerPrompt] = useState(4);
+  const [aspectRatio, setAspectRatio] = useState("16:9");
+  const [resolution, setResolution] = useState("1k");
   const [selectedTask, setSelectedTask] = useState<ImageTask | null>(null);
 
   const handleGenerate = () => {
     if (!idea) return;
-    generatePrompts(idea, promptsCount, photosPerPrompt);
+    // Pass settings to the generatePrompts if we modify it, but for now we need to update the hook to receive them.
+    generatePrompts(
+      idea,
+      promptsCount,
+      photosPerPrompt,
+      aspectRatio,
+      resolution,
+    );
   };
 
   const handleDownloadZip = async () => {
@@ -55,11 +63,11 @@ export const ImageGenerator: React.FC = () => {
     const zip = new JSZip();
 
     doneTasks.forEach((task, index) => {
-      // Видаляємо заборонені символи з назви
+      // Remove invalid characters from the title
       const safeTitle = task.title.replace(/[^a-z0-9]/gi, "_").toLowerCase();
       const fileName = `${index + 1}_${safeTitle}.jpg`;
 
-      // Додаємо base64 в архів
+      // Add base64 to archive
       zip.file(fileName, task.imageBase64!, { base64: true });
     });
 
@@ -85,7 +93,7 @@ export const ImageGenerator: React.FC = () => {
     <div className={styles.container}>
       <Space direction="vertical" size="large" style={{ width: "100%" }}>
         <Title level={2} style={{ margin: 0 }}>
-          Генератор Футажів
+          Footage Generator
         </Title>
 
         <Space wrap style={{ width: "100%", alignItems: "flex-end" }}>
@@ -97,17 +105,17 @@ export const ImageGenerator: React.FC = () => {
               minWidth: "300px",
             }}
           >
-            <Text type="secondary">Ідея для футажів:</Text>
+            <Text type="secondary">Footage Idea:</Text>
             <Input
               value={idea}
               onChange={(e) => setIdea(e.target.value)}
-              placeholder="Введіть ідею (наприклад: Кіберпанк місто вночі)"
+              placeholder="Enter your idea (e.g. Cyberpunk city at night)"
               disabled={isGeneratingPrompts || isProcessingQueue}
             />
           </div>
 
           <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-            <Text type="secondary">Промптів:</Text>
+            <Text type="secondary">Prompts:</Text>
             <Select
               value={promptsCount}
               onChange={setPromptsCount}
@@ -121,13 +129,46 @@ export const ImageGenerator: React.FC = () => {
           </div>
 
           <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-            <Text type="secondary">Фото на промпт:</Text>
+            <Text type="secondary">Images per Prompt:</Text>
             <Select
               value={photosPerPrompt}
               onChange={setPhotosPerPrompt}
               disabled={isGeneratingPrompts || isProcessingQueue}
               style={{ width: 140 }}
               options={[1, 2, 3, 4].map((num) => ({ value: num, label: num }))}
+            />
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+            <Text type="secondary">Aspect Ratio:</Text>
+            <Select
+              value={aspectRatio}
+              onChange={setAspectRatio}
+              disabled={isGeneratingPrompts || isProcessingQueue}
+              style={{ width: 140 }}
+              options={[
+                { value: "1:1", label: "1:1 (Square)" },
+                { value: "16:9", label: "16:9 (Landscape)" },
+                { value: "9:16", label: "9:16 (Portrait)" },
+                { value: "4:3", label: "4:3" },
+                { value: "3:4", label: "3:4" },
+              ]}
+            />
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+            <Text type="secondary">Resolution:</Text>
+            <Select
+              value={resolution}
+              onChange={setResolution}
+              disabled={isGeneratingPrompts || isProcessingQueue}
+              style={{ width: 140 }}
+              options={[
+                { value: "1k", label: "1K (Standard)" },
+                { value: "2k", label: "2K (High)" },
+                { value: "3k", label: "3K (Very High)" },
+                { value: "4k", label: "4K (Ultra)" },
+              ]}
             />
           </div>
 
@@ -138,16 +179,16 @@ export const ImageGenerator: React.FC = () => {
             disabled={isGeneratingPrompts || isProcessingQueue || !idea}
             loading={isGeneratingPrompts}
           >
-            Згенерувати
+            Generate
           </Button>
 
           {tasks.length > 0 && (
             <Popconfirm
-              title="Очистити все?"
-              description="Ви впевнені, що хочете видалити всі згенеровані фото?"
+              title="Clear all?"
+              description="Are you sure you want to delete all generated images?"
               onConfirm={clearAll}
-              okText="Так"
-              cancelText="Ні"
+              okText="Yes"
+              cancelText="No"
               disabled={isGeneratingPrompts || isProcessingQueue}
             >
               <Button
@@ -155,7 +196,7 @@ export const ImageGenerator: React.FC = () => {
                 icon={<DeleteOutlined />}
                 disabled={isGeneratingPrompts || isProcessingQueue}
               >
-                Очистити
+                Clear
               </Button>
             </Popconfirm>
           )}
@@ -167,7 +208,7 @@ export const ImageGenerator: React.FC = () => {
               icon={<DownloadOutlined />}
               onClick={handleDownloadZip}
             >
-              Скачати ZIP
+              Download ZIP
             </Button>
           )}
         </Space>
@@ -175,9 +216,8 @@ export const ImageGenerator: React.FC = () => {
         {tasks.length > 0 && (
           <div style={{ marginTop: 16 }}>
             <Text strong>
-              {doneCount} / {tasks.length} футажів готово
-              {(isGeneratingPrompts || isProcessingQueue) &&
-                " (Процес триває...)"}
+              {doneCount} / {tasks.length} footages ready
+              {(isGeneratingPrompts || isProcessingQueue) && " (Processing...)"}
             </Text>
             <Progress
               percent={progress}
@@ -200,12 +240,12 @@ export const ImageGenerator: React.FC = () => {
       </Space>
 
       <Modal
-        title={selectedTask?.title || "Деталі"}
+        title={selectedTask?.title || "Details"}
         open={!!selectedTask}
         onCancel={() => setSelectedTask(null)}
         footer={[
           <Button key="close" onClick={() => setSelectedTask(null)}>
-            Закрити
+            Close
           </Button>,
           <Button
             key="download"
@@ -213,7 +253,7 @@ export const ImageGenerator: React.FC = () => {
             icon={<DownloadOutlined />}
             onClick={() => selectedTask && downloadSingle(selectedTask)}
           >
-            Скачати фото
+            Download Image
           </Button>,
         ]}
         width={800}
@@ -238,7 +278,7 @@ export const ImageGenerator: React.FC = () => {
                 padding: "12px",
                 borderRadius: "8px",
                 fontFamily: "monospace",
-                color: "inherit", // успадковуємо колір тексту від Ant Design Theme
+                color: "inherit",
               }}
             >
               <strong>Prompt:</strong> {selectedTask.prompt}

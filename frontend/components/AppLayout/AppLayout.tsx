@@ -38,7 +38,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
   // const userId = (session?.user as { id: string })?.id;
   const isLoading = status === "loading";
   const isAuth = status === "authenticated";
-  const selectedKey = pathname.startsWith("/library") ? "library" : pathname.startsWith("/image") ? "image" : pathname.startsWith("/profile") ? "profile" : "create";
+  const selectedKey = pathname.startsWith("/library") ? "library" : pathname.startsWith("/image") ? "image" : pathname.startsWith("/footage") ? "footage" : pathname.startsWith("/profile") ? "profile" : "create";
 
   const menuItems: MenuItem[] = [
     {
@@ -52,9 +52,14 @@ export default function AppLayout({ children }: { children: ReactNode }) {
       label: <Link href="/library">Library</Link>,
     },
     {
+      key: "footage",
+      icon: <RocketOutlined />,
+      label: <Link href="/footage">Footage Generator</Link>,
+    },
+    {
       key: "image",
       icon: <RocketOutlined />, // You can change the icon if needed
-      label: <Link href="/image">Image Generator</Link>,
+      label: <Link href="/image">Image Generation</Link>,
     },
     {
       key: "profile",

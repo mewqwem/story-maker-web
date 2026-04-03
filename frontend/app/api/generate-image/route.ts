@@ -1,28 +1,30 @@
 import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenAI } from "@google/genai";
 
-// Змінні для легкого перемикання моделей
-const IMAGE_MODEL = process.env.GEMINI_IMAGE_MODEL || "imagen-3.0-generate-001"; // або "imagen-4.0-fast-generate-001" або "gemini-2.5-flash"
+// Models for easy switching
+const IMAGE_MODEL = process.env.GEMINI_IMAGE_MODEL || "imagen-3.0-generate-001"; 
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { prompt, numberOfImages = 1 } = body;
+    const { prompt, numberOfImages = 1, aspectRatio = "1:1", resolution = "1k" } = body;
 
     if (!prompt) {
       return NextResponse.json({ error: "Missing prompt" }, { status: 400 });
     }
 
-    // Якщо це модель Imagen або інша спеціалізована модель для зображень
+    // Enhance prompt with resolution if needed (Imagen doesn't have a direct "4k" resolution param, but adding it to prompt helps)
+    const finalPrompt = resolution && resolution !== "1k" ? `${prompt}, ${resolution} resolution, highly detailed, 8k uhd, dslr` : prompt;
+
     const response = await ai.models.generateImages({
       model: IMAGE_MODEL,
-      prompt: prompt,
+      prompt: finalPrompt,
       config: {
         numberOfImages: numberOfImages,
         outputMimeType: "image/jpeg",
-        // Ви можете додати aspect_ratio: "16:9" та інші параметри
+        aspectRatio: aspectRatio,
       }
     });
 
@@ -36,8 +38,7 @@ export async function POST(req: NextRequest) {
   } catch (error: any) {
     console.error("Error generating image:", error);
     
-    // Обробка Safety Settings / Цензури
-    const isSafetyError = error.message?.includes("safety") || error.status === 400; // Це залежить від того, як SDK повертає safety
+    const isSafetyError = error.message?.includes("safety") || error.status === 400; 
     
     return NextResponse.json({ 
       error: error.message || "Failed to generate image",

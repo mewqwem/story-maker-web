@@ -12,6 +12,8 @@ export interface ImageTask {
   imageBase64?: string; // Збережений Base64
   errorMessage?: string;
   isRestored?: boolean; // Показує, що картка завантажена з бази
+  aspectRatio?: string;
+  resolution?: string;
 }
 
 const STORAGE_KEY = 'story-maker-image-tasks';

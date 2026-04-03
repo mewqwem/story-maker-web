@@ -47,7 +47,7 @@ export function useImageGenerator() {
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, [isProcessingQueue, isGeneratingPrompts]);
 
-  const generatePrompts = async (idea: string, promptsCount: number, photosPerPrompt: number) => {
+  const generatePrompts = async (idea: string, promptsCount: number, photosPerPrompt: number, aspectRatio: string = "16:9", resolution: string = "1k") => {
     setIsGeneratingPrompts(true);
     await clearImageTasks(); // Очищуємо стару базу
     setTasks([]);
@@ -72,7 +72,9 @@ export function useImageGenerator() {
             promptId: promptId,
             title: `${item.title} (${i + 1}/${photosPerPrompt})`,
             prompt: item.prompt,
-            status: 'waiting'
+            status: 'waiting',
+            aspectRatio,
+            resolution
           });
         }
       });
@@ -109,7 +111,12 @@ export function useImageGenerator() {
       const res = await fetch('/api/generate-image', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt: nextTask.prompt, numberOfImages: batchTasks.length })
+        body: JSON.stringify({ 
+          prompt: nextTask.prompt, 
+          numberOfImages: batchTasks.length,
+          aspectRatio: nextTask.aspectRatio || "16:9",
+          resolution: nextTask.resolution || "1k"
+        })
       });
       
       const data = await res.json();

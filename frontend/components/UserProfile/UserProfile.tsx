@@ -92,7 +92,7 @@ export default function UserProfile() {
       <Title level={4} style={{ marginTop: 32 }}>
         Account Details
       </Title>
-      <Card bordered={false} className={css.detailsCard}>
+      <Card variant={"outlined"} className={css.detailsCard}>
         <Descriptions
           column={1}
           labelStyle={{ color: "#8c8c8c", minWidth: "200px", fontSize: "16px" }}

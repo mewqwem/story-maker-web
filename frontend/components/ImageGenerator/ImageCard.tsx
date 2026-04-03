@@ -21,7 +21,7 @@ export const ImageCard: React.FC<ImageCardProps> = ({ task, onRegenerate, onClic
       style={{ cursor: task.status === 'done' ? 'pointer' : 'default' }}
     >
       {task.isRestored && task.status === 'done' && (
-        <div className={styles.restoredIcon} title="Відновлено зі сховища">
+        <div className={styles.restoredIcon} title="Restored from storage">
           💾
         </div>
       )}

@@ -1,15 +1,15 @@
 import React from 'react';
-import { ImageGenerator } from '../../../components/ImageGenerator/ImageGenerator';
+import { DetailedImageGenerator } from '../../../components/DetailedImageGenerator/DetailedImageGenerator';
 
 export const metadata = {
-  title: 'Image Generator | Story Maker',
-  description: 'Generate images for your stories without loading the database.',
+  title: 'Image Generation | Story Maker',
+  description: 'Generate detailed images using custom prompts and settings.',
 };
 
-export default function ImagePage() {
+export default function DetailedImagePage() {
   return (
     <main>
-      <ImageGenerator />
+      <DetailedImageGenerator />
     </main>
   );
 }

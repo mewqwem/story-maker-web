@@ -229,12 +229,7 @@ const PromptManager = ({ type }: { type: ILibraryItem["type"] }) => {
                 initialValue="11labs"
                 style={{ flex: 1 }}
               >
-                <Select
-                  options={[
-                    { value: "11labs", label: "11Labs" },
-                    { value: "genai", label: "GenAI" },
-                  ]}
-                />
+                <Select options={[{ value: "11labs", label: "11Labs" }]} />
               </Form.Item>
               <Form.Item
                 name="language"
@@ -245,8 +240,8 @@ const PromptManager = ({ type }: { type: ILibraryItem["type"] }) => {
                 <Select
                   options={[
                     { value: "en", label: "English" },
-                    { value: "uk", label: "Ukrainian" },
                     { value: "es", label: "Spanish" },
+                    { value: "fr", label: "France" },
                   ]}
                 />
               </Form.Item>
@@ -277,17 +272,7 @@ export default function LibraryManager() {
         </span>
       ),
       children: <PromptManager type="story" />,
-    },
-    {
-      key: "seo",
-      label: "SEO Prompts",
-      children: <PromptManager type="seo" />,
-    },
-    {
-      key: "image",
-      label: "Image Styles",
-      children: <PromptManager type="image" />,
-    },
+    }
   ];
 
   return (

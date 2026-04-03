@@ -51,7 +51,7 @@ export default function UserProfile() {
 
   return (
     <div className={css.profileContainer}>
-      <Card className={css.profileCard} bordered={false}>
+      <Card className={css.profileCard} variant="borderless">
         <Row gutter={[32, 24]} align="middle">
           <Col xs={24} sm={8} md={6} style={{ textAlign: "center" }}>
             <Avatar

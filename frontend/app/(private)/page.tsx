@@ -1,14 +1,14 @@
 // page.tsx (Main Logic)
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Typography, Card, App } from "antd";
 import { RocketOutlined } from "@ant-design/icons";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { getLibrary, generateStory, generateAudioArchive } from "@/lib/api";
-import { IGeneratePayload } from "@/type/generate";
 import { StoryForm } from "@/components/StoryForm/StoryForm";
 import { StoryResult } from "@/components/StoryResult/StoryResult";
+import { useStoryFormStore } from "@/store/storyFormStore";
 
 // Import sub-components
 
@@ -17,14 +17,17 @@ const { Title } = Typography;
 export default function CreateStoryPage() {
   const { message } = App.useApp();
 
-  // States
-  const [formData, setFormData] = useState<IGeneratePayload>({
-    projectName: "",
-    title: "",
-    templateId: "",
-    language: "Ukrainian",
-  });
-  const [selectedVoiceId, setSelectedVoiceId] = useState<string>("");
+  // States from Zustand store
+  const formData = useStoryFormStore((state) => state.formData);
+  const setFormData = useStoryFormStore((state) => state.setFormData);
+  const selectedVoiceId = useStoryFormStore((state) => state.selectedVoiceId);
+  const setSelectedVoiceId = useStoryFormStore((state) => state.setSelectedVoiceId);
+
+  // To prevent hydration mismatch with persisted state, we only render the form when mounted
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // Data fetching
   const { data: templates, isLoading: loadingTemplates } = useQuery({
@@ -54,6 +57,8 @@ export default function CreateStoryPage() {
       window.URL.revokeObjectURL(url);
     },
   });
+
+  if (!isMounted) return null;
 
   return (
     <div style={{ maxWidth: 800, margin: "0 auto" }}>

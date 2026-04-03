@@ -67,7 +67,7 @@ export const StoryForm: React.FC<StoryFormProps> = ({
           <Text strong>Language</Text>
           <Select
             size="large"
-            defaultValue="Ukrainian"
+            defaultValue="English"
             style={{ width: "100%", marginTop: 8 }}
             onChange={(val) => setFormData({ ...formData, language: val })}
             options={[

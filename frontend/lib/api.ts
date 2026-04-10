@@ -8,8 +8,16 @@ const api = axios.create({
   baseURL: API_URL,
 });
 
-export const getLibrary = async (type: string): Promise<ILibraryItem[]> => {
-  const res = await api.get(`/library?type=${type}`);
+export const getLibrary = async (
+  type: string,
+  userId?: string,
+): Promise<ILibraryItem[]> => {
+  const res = await api.get(`/library`, {
+    params: { type },
+    headers: {
+      "x-user-id": userId || "",
+    },
+  });
   return res.data;
 };
 
